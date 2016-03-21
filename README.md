@@ -1,4 +1,4 @@
-# Parser for PCAWG11 consensus copy number to Battenberg format
+## Parser for PCAWG11 consensus copy number to Battenberg format
 
 Note that these scripts do not parse subclonal copy number yet!
 
