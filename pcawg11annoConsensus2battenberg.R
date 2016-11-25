@@ -18,8 +18,9 @@ set_colnames = function(df) {
 }
 
 samplename = unlist(strsplit(basename(infile_segments), ".", fixed=T))[1]
-#dat = read.table("output/pcawg11_consensus_profile/6aa00162-6294-4ce7-b6b7-0c3452e24cd6.consensus.20161103.somatic.cna.annotated.txt", header=T, stringsAsFactors=F)
 dat = read.table(infile_segments, header=T, stringsAsFactors=F)
+# Removing segments that should not have been released
+dat = dat[dat$total_cn >=0,]
 
 # mandatory star 3 segments first
 dat_sub = dat[dat$star == 3,]
