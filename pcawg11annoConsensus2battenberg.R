@@ -33,17 +33,18 @@ dat_sub = dat[dat$star != 3,]
 # Fill in rest with Battenberg calls - if available
 if (any(!is.na(dat$battenberg_nMaj1_A))) {
 	subclonal_method = "battenberg"
-	print(paste0("Choosing :", subclonal_method))
+	cat(paste0(samplename, "\t", subclonal_method, "\n"))
 	out2 = cbind(dat_sub[, c("chromosome", "start", "end")], matrix(NA, ncol=4, nrow=nrow(dat_sub)), dat_sub[, c("battenberg_nMaj1_A", "battenberg_nMin1_A", "battenberg_frac1_A", "battenberg_nMaj2_A", "battenberg_nMin2_A", "battenberg_frac2_A", "battenberg_SDfrac_A", "battenberg_SDfrac_A_BS", "battenberg_frac1_A_0.025", "battenberg_frac1_A_0.975")], matrix(NA, ncol=(10*5), nrow=nrow(dat_sub)))
 
 } else if (any(!is.na(dat$sclust_nMaj1_A))) {
 # Or alternatively Sclust - if available
 	subclonal_method = "sclust"
-	print(paste0("Choosing :", subclonal_method))
+	cat(paste0(samplename, "\t", subclonal_method, "\n"))
 	out2 = cbind(dat_sub[, c("chromosome", "start", "end")], matrix(NA, ncol=4, nrow=nrow(dat_sub)), dat_sub[, c("sclust_nMaj1_A", "sclust_nMin1_A", "sclust_frac1_A", "sclust_nMaj2_A", "sclust_nMin2_A", "sclust_frac2_A")], matrix(NA, ncol=(4 + 10*5), nrow=nrow(dat_sub)))
 } else {
-
-	stop("No annotations for either Battenberg or Sclust available")
+	subclonal_method = "purity"
+	cat(paste0(samplename, "\t", "consensus", "\n"))
+	out2 = cbind(dat_sub[, c("chromosome", "start", "end")], matrix(NA, ncol=4, nrow=nrow(dat_sub)), dat_sub[, c("major_cn", "minor_cn")], rep(1, nrow(dat_sub)), matrix(NA, ncol=(7 + 10*5), nrow=nrow(dat_sub)))
 }
 out2 = set_colnames(out2)
 
@@ -57,5 +58,6 @@ write.table(out, file=outfile_segments, row.names=F, quote=F, sep="\t")
 rho_psi_template = read.table(TEMPLATE, header=T, stringsAsFactors=F)
 all_purities = read.table(infile_purity, header=T, stringsAsFactors=F)
 purity = all_purities[all_purities$samplename==samplename, colnames(all_purities)==subclonal_method]
+
 rho_psi_template["FRAC_GENOME", "rho"] = purity
 write.table(rho_psi_template, file=outfile_purity, row.names=T, quote=F, sep="\t")
